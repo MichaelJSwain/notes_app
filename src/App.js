@@ -41,10 +41,42 @@ class App extends Component {
     localStorage.setItem("savedNotes", savedNotes);
   };
 
+  handleSetTimeAndDate = () => {
+    const date = new Date();
+    const hours =
+      date.getHours() < 10 ? `0${date.getHours()}` : `${date.getHours()}`;
+    const minutes =
+      date.getMinutes() < 10 ? `0${date.getMinutes()}` : `${date.getMinutes()}`;
+
+    const monthArray = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+
+    const currentDate = date.getDate();
+    const currentMonth = monthArray[date.getMonth()];
+    const currentYear = date.getFullYear();
+
+    return {
+      date: `${currentDate} ${currentMonth} ${currentYear}`,
+      time: `${hours}:${minutes}`,
+    };
+  };
+
   handleCreateNote = () => {
     const newNote = {
-      title: "New Note",
-      date: new Date(),
+      // title: "New Note",
+      created: this.handleSetTimeAndDate(),
       content: "No additional text",
       id: Math.floor(Math.random() * 10000),
     };
@@ -80,6 +112,7 @@ class App extends Component {
     const allNotes = [...this.state.allNotes];
     const index = allNotes.indexOf(this.state.currentNote);
     allNotes[index].content = currentTarget.innerHTML;
+    allNotes[index].created = this.handleSetTimeAndDate();
     console.log(allNotes);
     this.setState({ allNotes });
     this.handleStorage_put(allNotes);
@@ -93,6 +126,7 @@ class App extends Component {
   };
 
   render() {
+    console.log(this.state.allNotes);
     return (
       <div className="App">
         <NavBar
@@ -102,11 +136,13 @@ class App extends Component {
           isButtonDisabled={this.state.currentNote.content ? false : true}
         />
         <div className="row">
-          <NoteSideBar
-            notes={this.state.allNotes}
-            currentNote={this.state.currentNote}
-            onNoteSelect={this.handleNoteSelect}
-          />
+          {this.state.allNotes.length > 0 && (
+            <NoteSideBar
+              notes={this.state.allNotes}
+              currentNote={this.state.currentNote}
+              onNoteSelect={this.handleNoteSelect}
+            />
+          )}
           {this.state.currentNote.content && (
             <CurrentNote
               currentNote={this.state.currentNote}
