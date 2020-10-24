@@ -1,7 +1,11 @@
 import React from "react";
 
-const NavBar = ({ onCreateNote, onDeleteNote, isButtonDisabled }) => {
-  console.log(isButtonDisabled);
+const NavBar = ({
+  onCreateNote,
+  onDeleteNote,
+  isButtonDisabled,
+  onBoldContent,
+}) => {
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
       <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
@@ -16,6 +20,7 @@ const NavBar = ({ onCreateNote, onDeleteNote, isButtonDisabled }) => {
           >
             Delete note
           </button>
+          <button onClick={onBoldContent}>Bold</button>
         </div>
       </div>
     </nav>

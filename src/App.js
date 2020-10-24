@@ -13,22 +13,50 @@ class App extends Component {
     };
   }
 
+  componentDidMount() {
+    if (localStorage.getItem("savedNotes")) {
+      this.setState({
+        allNotes: JSON.parse(localStorage.getItem("savedNotes")),
+      });
+    } else {
+      localStorage.setItem("savedNotes", "[]");
+    }
+  }
+
+  handleStorage_post = (note) => {
+    let savedNotes = JSON.parse(localStorage.getItem("savedNotes"));
+    savedNotes.unshift(note);
+    savedNotes = JSON.stringify(savedNotes);
+    localStorage.setItem("savedNotes", savedNotes);
+  };
+
+  handleStorage_put = (notes) => {
+    console.log(notes);
+    const savedNotes = JSON.stringify(notes);
+    localStorage.setItem("savedNotes", savedNotes);
+  };
+
+  handleStorage_delete = (notes) => {
+    const savedNotes = JSON.stringify(notes);
+    localStorage.setItem("savedNotes", savedNotes);
+  };
+
   handleCreateNote = () => {
-    console.log("note created");
     const newNote = {
       title: "New Note",
       date: new Date(),
       content: "No additional text",
       id: Math.floor(Math.random() * 10000),
     };
-    console.log(newNote.date);
     const allNotes = [newNote, ...this.state.allNotes];
     this.setState({ allNotes, currentNote: newNote });
+    this.handleStorage_post(newNote);
   };
 
-  handleDeleteNote = (note) => {
+  handleDeleteNote = () => {
     let allNotes = [...this.state.allNotes];
     const index = allNotes.indexOf(this.state.currentNote);
+    console.log(allNotes[index].id);
 
     let currentNote = {};
     if (allNotes.length > 1) {
@@ -39,32 +67,38 @@ class App extends Component {
       }
     }
 
-    allNotes = allNotes.filter((n) => n.id !== this.state.currentNote.id);
+    allNotes = allNotes.filter((n) => n.id !== allNotes[index].id);
     console.log(allNotes);
+    // Update UI first
     this.setState({ allNotes, currentNote });
+
+    // Update DB
+    this.handleStorage_delete(allNotes);
   };
 
   handleNoteUpdate = ({ currentTarget }) => {
     const allNotes = [...this.state.allNotes];
     const index = allNotes.indexOf(this.state.currentNote);
     allNotes[index].content = currentTarget.innerHTML;
-
+    console.log(allNotes);
     this.setState({ allNotes });
+    this.handleStorage_put(allNotes);
   };
 
   handleNoteSelect = (note) => {
     // const allNotes = [...this.state.allNotes];
     // const index = allNotes.indexOf(note);
+    console.log(note);
     this.setState({ currentNote: note });
   };
 
   render() {
-    console.log(this.state);
     return (
       <div className="App">
         <NavBar
           onCreateNote={this.handleCreateNote}
           onDeleteNote={this.handleDeleteNote}
+          onBoldContent={this.handleBoldContent}
           isButtonDisabled={this.state.currentNote.content ? false : true}
         />
         <div className="row">

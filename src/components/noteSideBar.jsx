@@ -1,7 +1,6 @@
 import React from "react";
 
 const NoteSideBar = ({ notes, currentNote, onNoteSelect }) => {
-  console.log(notes);
   return (
     <ul className="list-group col-md-3" style={{ marginRight: "0px" }}>
       {notes.map((note) => (
